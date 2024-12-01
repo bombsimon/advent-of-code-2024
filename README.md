@@ -14,7 +14,7 @@ Sticking to Rust this year as well.
 
 ```sh
 # Run a specific day
-› carog run <day: i32>
+› cargo run <day: i32>
 ```
 
 ## Setup new day
