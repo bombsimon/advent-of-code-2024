@@ -3,6 +3,12 @@
 Not much changing here, [Advent of Code](https://adventofcode.com) 2024!
 Sticking to Rust this year as well.
 
+## Input
+
+As per [the official FAQ][faq] and a lot of [discussions on Reddit][reddit] I'm
+not committing any input data this year. So to run this code you'll have to
+download the input first.
+
 ## Test
 
 ```sh
@@ -25,3 +31,6 @@ scaffold an empty day and update the match arms to include this.
 
 If the environment variable `AOC_TOKEN` is set to a valid session cookie value
 the input for that day will be downloaded as well.
+
+[faq]: https://adventofcode.com/about#faq_copying
+[reddit]: https://www.reddit.com/r/adventofcode/wiki/troubleshooting/no_asking_for_inputs
