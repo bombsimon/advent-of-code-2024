@@ -1,9 +1,10 @@
+mod day01;
 
 pub fn solution_for(day: i32) {
     println!("Showing solution for day {}\n", day);
 
     match day {
-        1 => todo!(),
+        1 => day01::solve(),
         2 => todo!(),
         3 => todo!(),
         4 => todo!(),
