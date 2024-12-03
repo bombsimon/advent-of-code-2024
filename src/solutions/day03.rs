@@ -25,21 +25,21 @@ fn part_one(input: String) -> i64 {
 }
 
 fn part_two(input: String) -> i64 {
-    let re = regex::Regex::new(r#"(?m)(mul\(\d{1,3},\d{1,3}\)|don't\(\)|do\(\))"#).unwrap();
+    let re = regex::Regex::new(
+        r#"(?mx)
+        (
+            mul\((\d{1,3}),(\d{1,3})\)|
+            don't\(\)()()|
+            do\(\)()()
+        )"#,
+    )
+    .unwrap();
     let mut res = vec![];
-    for (_, [m]) in re.captures_iter(&input).map(|c| c.extract()) {
+    for (_, [m, n1, n2]) in re.captures_iter(&input).map(|c| c.extract()) {
         let op = match m {
-            m if m.starts_with("mul") => {
-                let m = m.replace("mul(", "").replace(")", "");
-                let mut nums = m.split(",");
-                Op::Mul(
-                    nums.next().unwrap().parse().unwrap(),
-                    nums.next().unwrap().parse().unwrap(),
-                )
-            }
             "do()" => Op::Do,
             "don't()" => Op::Dont,
-            _ => unreachable!(),
+            _ => Op::Mul(n1.parse::<i64>().unwrap(), n2.parse::<i64>().unwrap()),
         };
 
         res.push(op);
