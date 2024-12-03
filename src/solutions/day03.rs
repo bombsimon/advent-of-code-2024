@@ -1,12 +1,5 @@
 use crate::input;
 
-#[derive(Debug)]
-enum Op {
-    Mul(i64, i64),
-    Do,
-    Dont,
-}
-
 pub fn solve() {
     let x = input::raw_file_for_day(3);
 
@@ -15,43 +8,37 @@ pub fn solve() {
 }
 
 fn part_one(input: String) -> i64 {
-    let re = regex::Regex::new(r"(?m)mul\((\d{1,3}),(\d{1,3})\)").unwrap();
-    let mut res = vec![];
-    for (_, [n1, n2]) in re.captures_iter(&input).map(|c| c.extract()) {
-        res.push(n1.parse::<i64>().unwrap() * n2.parse::<i64>().unwrap());
-    }
-
-    res.iter().sum()
+    regex::Regex::new(r"(?m)mul\((\d{1,3}),(\d{1,3})\)")
+        .unwrap()
+        .captures_iter(&input)
+        .map(|c| c.extract())
+        .fold(0, |acc, (_, [n1, n2])| {
+            acc + n1.parse::<i64>().unwrap() * n2.parse::<i64>().unwrap()
+        })
 }
 
 fn part_two(input: String) -> i64 {
-    let re = regex::Regex::new(
+    regex::Regex::new(
         r#"(?mx)
-        (
-            mul\((\d{1,3}),(\d{1,3})\)|
-            don't\(\)()()|
-            do\(\)()()
-        )"#,
+            (
+                mul\((\d{1,3}),(\d{1,3})\)|
+                don't\(\)()()|
+                do\(\)()()
+            )"#,
     )
-    .unwrap();
-    let mut res = vec![];
-    for (_, [m, n1, n2]) in re.captures_iter(&input).map(|c| c.extract()) {
-        let op = match m {
-            "do()" => Op::Do,
-            "don't()" => Op::Dont,
-            _ => Op::Mul(n1.parse::<i64>().unwrap(), n2.parse::<i64>().unwrap()),
-        };
-
-        res.push(op);
-    }
-
-    res.iter()
-        .fold((0, true), |(total, should_add), v| match v {
-            Op::Mul(a, b) if should_add => (total + a * b, should_add),
-            Op::Do => (total, true),
-            Op::Mul(_, _) | Op::Dont => (total, false),
-        })
-        .0
+    .unwrap()
+    .captures_iter(&input)
+    .map(|c| c.extract())
+    .fold((0, true), |(val, should_add), (_, [m, n1, n2])| match m {
+        "do()" => (val, true),
+        "don't()" => (val, false),
+        _ if !should_add => (val, should_add),
+        _ => (
+            val + n1.parse::<i64>().unwrap() * n2.parse::<i64>().unwrap(),
+            should_add,
+        ),
+    })
+    .0
 }
 
 #[cfg(test)]
