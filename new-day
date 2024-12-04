@@ -8,7 +8,7 @@ day_no=$(( $(grep -n pub src/solutions/mod.rs | awk -F':' '{print $1}') - 1 ))
 day=$(printf "day%02d" "$day_no")
 
 
-[ -e "$script_dir/src/solutions/${day}.rs" ] && exit 1
+[ -e "$script_dir/src/solutions/${day}.rs" ] && echo "$day.rs already exist" && exit 1
 
 cat > "$script_dir/src/solutions/${day}.rs" <<-EOF
 use crate::input;
@@ -53,7 +53,7 @@ EOF
 gsed -i "${day_no}i mod $day;" "$script_dir/src/solutions/mod.rs"
 gsed -i "s/ $day_no => todo!()/ $day_no => $day::solve()/" "$script_dir/src/solutions/mod.rs"
 
-if [ -z "$AOC_TOKEN" ]; then
+if [ -z "${AOC_TOKEN:-}" ]; then
     echo "No AOC_TOKEN found, can't fetch input"
     echo "Remove this line and enter input for day $day_no" > "$script_dir/input/$day"
     nvim "$script_dir/input/$day"
