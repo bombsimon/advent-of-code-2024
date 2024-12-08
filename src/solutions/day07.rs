@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use crate::input;
 
 pub fn solve() {
@@ -17,33 +15,47 @@ fn part_two(input: Vec<String>) -> i64 {
     solve_with_op(input, true)
 }
 
-fn solve_with_op(input: Vec<String>, or_op: bool) -> i64 {
+fn solve_with_op(input: Vec<String>, with_concat: bool) -> i64 {
     parse_input(input)
         .into_iter()
-        .map(|(goal, set)| {
-            let mut sums = get_permutations(set[0], set[1], or_op);
-
-            set.iter().skip(2).for_each(|x| {
-                let mut s2 = HashSet::new();
-                for v in &sums {
-                    s2.extend(
-                        get_permutations(*v, *x, or_op)
-                            .iter()
-                            .filter(|&r| *r <= goal)
-                            .collect::<HashSet<_>>(),
-                    );
-                }
-
-                sums = s2;
-            });
-
-            if sums.contains(&goal) {
-                goal
+        .filter_map(|(goal, set)| {
+            if is_valid(goal, set, with_concat) {
+                Some(goal)
             } else {
-                0
+                None
             }
         })
         .sum::<i64>()
+}
+
+fn is_valid(goal: i64, nums: Vec<i64>, with_concat: bool) -> bool {
+    if nums.len() == 1 {
+        return nums[0] == goal;
+    }
+
+    let (n1, n2) = (nums[0], nums[1]);
+    let mut plus = vec![n1 + n2];
+    plus.extend(nums[2..].iter());
+
+    if is_valid(goal, plus, with_concat) {
+        return true;
+    }
+
+    let mut addition = vec![n1 * n2];
+    addition.extend(nums[2..].iter());
+
+    if is_valid(goal, addition, with_concat) {
+        return true;
+    }
+
+    if !with_concat {
+        return false;
+    }
+
+    let mut concat = vec![format!("{n1}{n2}").parse::<i64>().unwrap()];
+    concat.extend(nums[2..].iter());
+
+    is_valid(goal, concat, with_concat)
 }
 
 fn parse_input(input: Vec<String>) -> Vec<(i64, Vec<i64>)> {
@@ -62,18 +74,6 @@ fn parse_input(input: Vec<String>) -> Vec<(i64, Vec<i64>)> {
             (p1, p2)
         })
         .collect()
-}
-
-fn get_permutations(a: i64, b: i64, or_op: bool) -> HashSet<i64> {
-    let mut p = HashSet::new();
-    p.insert(a + b);
-    p.insert(a * b);
-
-    if or_op {
-        p.insert(format!("{}{}", a, b).parse::<i64>().unwrap());
-    }
-
-    p
 }
 
 #[cfg(test)]
