@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-pub(crate) fn this<F>(f: F)
+pub(crate) fn this<F>(description: &str, f: F)
 where
     F: Fn(),
 {
@@ -7,5 +7,5 @@ where
     f();
     let duration = start.elapsed();
 
-    println!("TOOK: {:?}", duration);
+    println!("'{description}' took {:?}", duration);
 }
