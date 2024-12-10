@@ -17,10 +17,13 @@ pub fn file_for_day(day: i32) -> Vec<String> {
 }
 
 pub fn print_and_wait(print: String) {
-    let mut s = String::new();
-
     println!("{}", print);
     print!("❯ PRESS ENTER TO CONTINUE...");
+    wait();
+}
+
+pub fn wait() {
+    let mut s = String::new();
     let _ = stdout().flush();
     stdin()
         .read_line(&mut s)
